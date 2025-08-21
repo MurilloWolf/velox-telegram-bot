@@ -18,12 +18,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^5.0.0",
     "dotenv": "^16.0.0",
     "dotenv-cli": "^8.0.0",
-    "node-telegram-bot-api": "^0.66.0",
-    "prisma": "^5.0.0",
-    "sqlstring": "^2.3.3"
+    "node-telegram-bot-api": "^0.66.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.29.0",
