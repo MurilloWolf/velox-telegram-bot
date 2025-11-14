@@ -2,6 +2,8 @@ import {
   CallbackData,
   NavigationCallbackData,
   UfFilterCallbackData,
+  RaceDetailCallbackData,
+  RaceLocationCallbackData,
 } from '../../../types/callbacks/index.ts';
 
 export class CallbackDataSerializer {
@@ -14,6 +16,14 @@ export class CallbackDataSerializer {
       case 'uf_filter': {
         const filterData = data as UfFilterCallbackData;
         return `uf:${filterData.uf}`;
+      }
+      case 'race_detail': {
+        const detailData = data as RaceDetailCallbackData;
+        return `race:${detailData.raceId}${detailData.uf ? `:${detailData.uf}` : ''}`;
+      }
+      case 'race_location': {
+        const locationData = data as RaceLocationCallbackData;
+        return `location:${locationData.raceId}${locationData.uf ? `:${locationData.uf}` : ''}`;
       }
       default: {
         const unknownData = data as { type: string };
@@ -40,6 +50,20 @@ export class CallbackDataSerializer {
           uf: parts[1] as 'SP' | 'PR',
         } as UfFilterCallbackData;
       }
+      case 'race': {
+        return {
+          type: 'race_detail',
+          raceId: parts[1],
+          uf: parts[2] || undefined,
+        } as RaceDetailCallbackData;
+      }
+      case 'location': {
+        return {
+          type: 'race_location',
+          raceId: parts[1],
+          uf: parts[2] || undefined,
+        } as RaceLocationCallbackData;
+      }
       default:
         throw new Error(`Prefixo de callback não reconhecido: ${prefix}`);
     }
@@ -64,5 +88,13 @@ export class CallbackDataSerializer {
 
   static ufFilter(uf: 'SP' | 'PR'): UfFilterCallbackData {
     return { type: 'uf_filter', uf };
+  }
+
+  static raceDetail(raceId: string, uf?: string): RaceDetailCallbackData {
+    return { type: 'race_detail', raceId, uf };
+  }
+
+  static raceLocation(raceId: string, uf?: string): RaceLocationCallbackData {
+    return { type: 'race_location', raceId, uf };
   }
 }

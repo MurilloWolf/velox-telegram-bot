@@ -67,8 +67,9 @@ export interface Race {
   location: string;
   city?: string;
   state?: string;
-  latitude?: number;
-  longitude?: number;
+  latitude: number;
+  longitude: number;
+  promoImageUrl?: string;
   link: string;
   time: string;
   status: RaceStatus;

@@ -42,7 +42,9 @@ export class CommandRegistry {
     try {
       switch (moduleName) {
         case 'races': {
-          const { raceCommands } = await import('../../commands/usecases/races/index.ts');
+          const { raceCommands } = await import(
+            '../../commands/usecases/races/index.ts'
+          );
           this.registerCommands(raceCommands, moduleName);
           this.registeredModules.add(moduleName);
           break;
