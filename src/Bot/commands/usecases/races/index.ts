@@ -9,6 +9,8 @@ type CommandHandler = (
 export * from './commands/index.js';
 export * from './callbacks/index.js';
 
-export const raceCallbackHandlers: CallbackHandler[] = [];
+import { commands } from './commands/index.js';
+import { callbackHandlers } from './callbacks/index.js';
 
-export const raceCommands: Record<string, CommandHandler> = {};
+export const raceCallbackHandlers: CallbackHandler[] = callbackHandlers;
+export const raceCommands: Record<string, CommandHandler> = commands;

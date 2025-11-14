@@ -30,6 +30,13 @@ export class CallbackRegistry {
   private async registerHandlersFromModule(moduleName: string): Promise<void> {
     try {
       switch (moduleName) {
+        case 'races': {
+          const { raceCallbackHandlers } = await import(
+            '../../commands/usecases/races/index.ts'
+          );
+          this.registerHandlers(raceCallbackHandlers, 'races');
+          break;
+        }
         // REGISTER EXAMPLE
         // case 'shared': {
         //   const { sharedCallbackHandlers } = await import(

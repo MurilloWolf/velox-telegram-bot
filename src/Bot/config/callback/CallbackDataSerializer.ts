@@ -1,6 +1,7 @@
 import {
   CallbackData,
   NavigationCallbackData,
+  UfFilterCallbackData,
 } from '../../../types/callbacks/index.ts';
 
 export class CallbackDataSerializer {
@@ -10,8 +11,14 @@ export class CallbackDataSerializer {
         const navData = data as NavigationCallbackData;
         return `nav:${navData.action}:${navData.target || ''}`;
       }
-      default:
-        throw new Error(`Tipo de callback não suportado: ${data.type}`);
+      case 'uf_filter': {
+        const filterData = data as UfFilterCallbackData;
+        return `uf:${filterData.uf}`;
+      }
+      default: {
+        const unknownData = data as { type: string };
+        throw new Error(`Tipo de callback não suportado: ${unknownData.type}`);
+      }
     }
   }
 
@@ -26,6 +33,12 @@ export class CallbackDataSerializer {
           action: parts[1] as 'back' | 'next' | 'close',
           target: parts[2] || '',
         } as NavigationCallbackData;
+      }
+      case 'uf': {
+        return {
+          type: 'uf_filter',
+          uf: parts[1] as 'SP' | 'PR',
+        } as UfFilterCallbackData;
       }
       default:
         throw new Error(`Prefixo de callback não reconhecido: ${prefix}`);
@@ -47,5 +60,9 @@ export class CallbackDataSerializer {
     target?: string
   ): NavigationCallbackData {
     return { type: 'navigation', action, target: target || '' };
+  }
+
+  static ufFilter(uf: 'SP' | 'PR'): UfFilterCallbackData {
+    return { type: 'uf_filter', uf };
   }
 }

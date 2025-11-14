@@ -1,2 +1,5 @@
-// Empty callbacks index - ready for future implementation
-export const callbackHandlers = [];
+import { ufFilterCallbackHandler } from './ufFilterCallback.ts';
+
+export const callbackHandlers = [ufFilterCallbackHandler];
+
+export * from './ufFilterCallback.ts';

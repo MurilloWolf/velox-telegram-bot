@@ -5,16 +5,20 @@ import { Race } from '../types/Service.ts';
 export class RaceApiService {
   private readonly baseUrl = '/races';
 
-  async getAvailableRaces(): Promise<Race[]> {
+  async getAvailableRaces(filters?: { uf?: string }): Promise<Race[]> {
     try {
-      const response = await httpClient.get<Race[]>(
-        `${this.baseUrl}/available`
-      );
+      let url = `${this.baseUrl}/available`;
+      if (filters?.uf) {
+        url += `?uf=${filters.uf}`;
+      }
+
+      const response = await httpClient.get<Race[]>(url);
 
       logger.info('Successfully retrieved available races', {
         module: 'RaceApiService',
         action: 'get_available_races',
         racesCount: response.data.length,
+        filters,
       });
 
       return response.data;
@@ -24,6 +28,7 @@ export class RaceApiService {
         {
           module: 'RaceApiService',
           action: 'get_available_races',
+          filters,
         },
         error as Error
       );
