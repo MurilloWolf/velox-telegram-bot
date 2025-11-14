@@ -1,4 +1,4 @@
-import { logger } from '../utils/Logger.js';
+import { logger } from '../../utils/Logger.ts';
 
 export interface AlertConfig {
   botToken: string;
@@ -56,6 +56,38 @@ export class AlertService {
     this.validateConfig();
   }
 
+  private sanitizeMarkdown(text: string): string {
+    // Escape caracteres especiais do Markdown V2 do Telegram
+    return text
+      .replace(/\\/g, '\\\\') // Escape backslashes first
+      .replace(/\*/g, '\\*') // Escape asterisks
+      .replace(/_/g, '\\_') // Escape underscores
+      .replace(/\[/g, '\\[') // Escape square brackets
+      .replace(/\]/g, '\\]') // Escape square brackets
+      .replace(/\(/g, '\\(') // Escape parentheses
+      .replace(/\)/g, '\\)') // Escape parentheses
+      .replace(/~/g, '\\~') // Escape tildes
+      .replace(/`/g, '\\`') // Escape backticks
+      .replace(/>/g, '\\>') // Escape greater than
+      .replace(/#/g, '\\#') // Escape hash
+      .replace(/\+/g, '\\+') // Escape plus
+      .replace(/-/g, '\\-') // Escape minus
+      .replace(/=/g, '\\=') // Escape equals
+      .replace(/\|/g, '\\|') // Escape pipe
+      .replace(/\{/g, '\\{') // Escape curly braces
+      .replace(/\}/g, '\\}') // Escape curly braces
+      .replace(/\./g, '\\.') // Escape dots
+      .replace(/!/g, '\\!'); // Escape exclamation marks
+  }
+
+  private createSafeMarkdownMessage(text: string): string {
+    // Para mensagens simples, usar texto sem formatação especial
+    // Apenas manter algumas formatações básicas seguras
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '*$1*') // Converter bold duplo para simples
+      .replace(/__(.*?)__/g, '_$1_'); // Converter itálico duplo para simples
+  }
+
   private validateConfig(): void {
     if (!this.config.botToken) {
       logger.warn('Alert service initialized without TELEGRAM_BOT_TOKEN', {
@@ -68,24 +100,6 @@ export class AlertService {
         module: 'AlertService',
       });
     }
-  }
-
-  private sanitizeForTelegram(text: string): string {
-    // Para evitar problemas com parsing Markdown, vamos usar texto simples
-    // e apenas escapar caracteres problemáticos básicos
-    return text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
-  }
-
-  private createSafeMessage(text: string): string {
-    // Converter formatação Markdown básica para HTML seguro
-    return text
-      .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>') // Bold
-      .replace(/\*(.*?)\*/g, '<i>$1</i>') // Italic
-      .replace(/`(.*?)`/g, '<code>$1</code>') // Code
-      .replace(/_(.*?)_/g, '<i>$1</i>'); // Underscore italic
   }
 
   private shouldSendAlert(type: string): boolean {
@@ -159,16 +173,16 @@ export class AlertService {
     try {
       const alertUrl = `https://api.telegram.org/bot${this.config.botToken}/sendMessage`;
 
-      // Usar HTML em vez de Markdown para evitar problemas de parsing
-      const safeMessage = this.createSafeMessage(message);
+      // Sanitizar a mensagem para evitar problemas de parsing
+      const safMessage = this.createSafeMarkdownMessage(message);
 
       const response = await fetch(alertUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: this.config.alertAgent,
-          text: safeMessage,
-          parse_mode: 'HTML',
+          text: safMessage,
+          parse_mode: 'Markdown',
           disable_web_page_preview: options.disableWebPagePreview ?? true,
           disable_notification: options.silent ?? false,
         }),
@@ -210,14 +224,14 @@ export class AlertService {
       return false;
     }
 
-    const message = `✅ <b>DashBot Started Successfully</b>
+    const message = `✅ *DashBot Started Successfully*
 
-🚀 <b>Status:</b> Bot is now running
-🕒 <b>Time:</b> ${info.timestamp.toLocaleString('pt-BR')}
-🌍 <b>Environment:</b> ${info.environment}
-🤖 <b>Platform:</b> ${info.platform}${info.version ? `\n📦 <b>Version:</b> ${info.version}` : ''}
+🚀 *Status:* Bot is now running
+🕒 *Time:* ${info.timestamp.toLocaleString('pt-BR')}
+🌍 *Environment:* ${info.environment}
+🤖 *Platform:* ${info.platform}${info.version ? `\n📦 *Version:* ${info.version}` : ''}
 
-📊 <b>Health monitoring is active</b>`;
+📊 *Health monitoring is active*`;
 
     const success = await this.sendAlert(message, { level: 'info' });
 
@@ -237,13 +251,13 @@ export class AlertService {
 
     const uptimeMinutes = Math.floor(info.uptime / 60);
 
-    const message = `⚠️ <b>DashBot Shutdown</b>
+    const message = `⚠️ *DashBot Shutdown*
 
-🔄 <b>Signal:</b> ${info.signal}
-🕒 <b>Time:</b> ${info.timestamp.toLocaleString('pt-BR')}
-⏱ <b>Uptime:</b> ${uptimeMinutes} minutes
+🔄 *Signal:* ${info.signal}
+🕒 *Time:* ${info.timestamp.toLocaleString('pt-BR')}
+⏱ *Uptime:* ${uptimeMinutes} minutes
 
-🔧 <b>Process is shutting down gracefully</b>`;
+🔧 *Process is shutting down gracefully*`;
 
     const success = await this.sendAlert(message, { level: 'warning' });
 
@@ -263,17 +277,17 @@ export class AlertService {
 
     const contextInfo = info.context
       ? Object.entries(info.context)
-          .map(([key, value]) => `<b>${key}:</b> ${String(value)}`)
+          .map(([key, value]) => `*${key}:* ${String(value)}`)
           .join('\n')
       : '';
 
-    const message = `🚨 <b>DashBot Error</b>
+    const message = `🚨 *DashBot Error*
 
-❌ <b>Message:</b> ${info.message}
-🕒 <b>Time:</b> ${info.timestamp.toLocaleString('pt-BR')}
-${contextInfo ? `\n📋 <b>Context:</b>\n${contextInfo}` : ''}
+❌ *Message:* ${info.message}
+🕒 *Time:* ${info.timestamp.toLocaleString('pt-BR')}
+${contextInfo ? `\n📋 *Context:*\n${contextInfo}` : ''}
 
-🔧 <b>Please check logs for details</b>`;
+🔧 *Please check logs for details*`;
 
     const success = await this.sendAlert(message, { level: 'error' });
 
@@ -309,17 +323,17 @@ ${contextInfo ? `\n📋 <b>Context:</b>\n${contextInfo}` : ''}
 
     const contextInfo = info.context
       ? Object.entries(info.context)
-          .map(([key, value]) => `<b>${key}:</b> ${String(value)}`)
+          .map(([key, value]) => `*${key}:* ${String(value)}`)
           .join('\n')
       : '';
 
-    const message = `🚨 <b>DashBot Critical Error</b>
+    const message = `🚨 *DashBot Critical Error*
 
-💥 <b>Message:</b> ${info.message}
-🕒 <b>Time:</b> ${info.timestamp.toLocaleString('pt-BR')}
-${contextInfo ? `\n📋 <b>Context:</b>\n${contextInfo}` : ''}
+💥 *Message:* ${info.message}
+🕒 *Time:* ${info.timestamp.toLocaleString('pt-BR')}
+${contextInfo ? `\n📋 *Context:*\n${contextInfo}` : ''}
 
-⚠️ <b>Immediate attention required</b>`;
+⚠️ *Immediate attention required*`;
 
     try {
       const alertUrl = `https://api.telegram.org/bot${this.config.botToken}/sendMessage`;
@@ -330,7 +344,7 @@ ${contextInfo ? `\n📋 <b>Context:</b>\n${contextInfo}` : ''}
         body: JSON.stringify({
           chat_id: this.config.alertAgent,
           text: message,
-          parse_mode: 'HTML',
+          parse_mode: 'Markdown',
           disable_web_page_preview: true,
           disable_notification: false, // Critical alerts are never silent
         }),

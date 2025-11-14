@@ -28,6 +28,10 @@ export async function routeCommand(
   command: string,
   input: CommandInput
 ): Promise<CommandOutput> {
+  let output: CommandOutput = {
+    text: '',
+    format: 'HTML',
+  };
   try {
     await messageInterceptor.interceptIncomingMessage(input);
 
@@ -36,7 +40,7 @@ export async function routeCommand(
 
     if (handler) {
       logger.commandExecution(command, input.user?.id?.toString());
-      const output = await handler(input);
+      output = await handler(input);
       await messageInterceptor.interceptOutgoingMessage(input, output);
       return output;
     }
@@ -47,21 +51,21 @@ export async function routeCommand(
       commandName: command,
       userId: input.user?.id?.toString(),
     });
-    const output = {
+    output = {
       text: '❌ Comando não reconhecido.\nUse /ajuda para ver os comandos disponíveis.',
       format: 'HTML',
     };
-    await messageInterceptor.interceptOutgoingMessage(input, output);
-    return output;
   } catch (error) {
     logger.commandError(command, error as Error, input.user?.id?.toString());
-    const output = {
+    output = {
       text: '❌ Erro interno. Tente novamente mais tarde.',
       format: 'HTML',
     };
+  } finally {
     await messageInterceptor.interceptOutgoingMessage(input, output);
-    return output;
   }
+
+  return output;
 }
 
 export async function getAvailableCommands(): Promise<string[]> {

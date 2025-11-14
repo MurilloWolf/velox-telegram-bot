@@ -15,7 +15,6 @@ export class CallbackRegistry {
 
   autoRegisterHandlers(): void {
     this.registerHandlersFromModule('races');
-    this.registerHandlersFromModule('user');
     this.registerHandlersFromModule('shared');
 
     logger.info(
@@ -31,27 +30,14 @@ export class CallbackRegistry {
   private async registerHandlersFromModule(moduleName: string): Promise<void> {
     try {
       switch (moduleName) {
-        case 'races': {
-          const { raceCallbackHandlers } = await import(
-            '../../commands/usecases/races/index.ts'
-          );
-          this.registerHandlers(raceCallbackHandlers, 'races');
-          break;
-        }
-        case 'user': {
-          const { userCallbackHandlers } = await import(
-            '../../commands/usecases/user/index.ts'
-          );
-          this.registerHandlers(userCallbackHandlers, 'user');
-          break;
-        }
-        case 'shared': {
-          const { sharedCallbackHandlers } = await import(
-            '../../commands/usecases/shared/index.ts'
-          );
-          this.registerHandlers(sharedCallbackHandlers, 'shared');
-          break;
-        }
+        // REGISTER EXAMPLE
+        // case 'shared': {
+        //   const { sharedCallbackHandlers } = await import(
+        //     '../../commands/usecases/shared/index.ts'
+        //   );
+        //   this.registerHandlers(sharedCallbackHandlers, 'shared');
+        //   break;
+        // }
         default:
           logger.warn(`Módulo desconhecido: ${moduleName}`, {
             module: 'CallbackRegistry',

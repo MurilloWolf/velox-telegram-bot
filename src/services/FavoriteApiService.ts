@@ -250,5 +250,4 @@ export class FavoriteApiService {
   }
 }
 
-// Singleton instance
 export const favoriteApiService = new FavoriteApiService();

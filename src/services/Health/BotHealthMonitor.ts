@@ -1,5 +1,5 @@
-import { logger } from '../utils/Logger.js';
-import { alertService } from './AlertService.js';
+import { logger } from '../../utils/Logger.ts';
+import { alertService } from '../Alert/AlertService.ts';
 
 interface BotHealthStatus {
   status: 'healthy' | 'unhealthy' | 'warning';
@@ -32,9 +32,11 @@ export class BotHealthMonitor {
   private config: AlertConfig;
 
   constructor() {
+    const oneMinute = 60 * 1000;
+    const fiveMinutes = 5 * oneMinute;
     this.config = {
-      checkInterval: 60000, // 1 minuto
-      alertCooldown: 300000, // 5 minutos de cooldown entre alertas do mesmo tipo
+      checkInterval: oneMinute,
+      alertCooldown: fiveMinutes,
     };
   }
 
@@ -142,15 +144,12 @@ export class BotHealthMonitor {
       interval: this.config.checkInterval,
     });
 
-    // Verificação inicial
     this.performHealthCheck();
 
-    // Configurar verificação periódica
     this.monitoringInterval = setInterval(() => {
       this.performHealthCheck();
     }, this.config.checkInterval);
 
-    // Limpeza quando o processo termina
     process.on('SIGINT', () => this.stopMonitoring());
     process.on('SIGTERM', () => this.stopMonitoring());
   }
@@ -165,7 +164,6 @@ export class BotHealthMonitor {
         uptime: status.uptime,
       });
 
-      // Enviar alerta se necessário
       if (this.shouldSendAlert(status.status)) {
         const alertLevel =
           status.status === 'healthy'
@@ -187,7 +185,6 @@ export class BotHealthMonitor {
         error: (error as Error).message,
       });
 
-      // Em caso de erro crítico, enviar alerta
       if (this.shouldSendAlert('unhealthy')) {
         await alertService.sendCriticalAlert({
           message: `Health Monitor Failed: ${(error as Error).message}`,
@@ -210,18 +207,15 @@ export class BotHealthMonitor {
     }
   }
 
-  // Método para teste manual
   async sendTestAlert(): Promise<void> {
     const testMessage = `🧪 <b>DashBot Test Alert</b>\n\n✅ <b>Status:</b> Monitoring system is working\n🕒 <b>Time:</b> ${new Date().toLocaleString('pt-BR')}\n\nThis is a test alert to verify the monitoring system.`;
     await alertService.sendAlert(testMessage, { level: 'info' });
   }
 
-  // Método público para enviar alertas personalizados
   async sendAlert(message: string): Promise<void> {
     await alertService.sendAlert(message, { level: 'info' });
   }
 
-  // Método para simular diferentes cenários de teste
   async simulateUnhealthyBot(): Promise<void> {
     const unhealthyStatus: BotHealthStatus = {
       status: 'unhealthy',

@@ -27,8 +27,6 @@ export enum ChatType {
 export type MessageTypeValue = keyof typeof MessageType;
 export type ChatTypeValue = keyof typeof ChatType;
 export type MessageDirectionValue = keyof typeof MessageDirection;
-
-// Types for Telegram messages
 export interface TelegramMessage {
   message_id: number;
   chat: {
@@ -60,8 +58,6 @@ export interface TelegramMessage {
   };
   edit_date?: number;
 }
-
-// Types for WhatsApp messages (example structure)
 export interface WhatsAppMessage {
   id: string;
   from: string;
@@ -81,13 +77,8 @@ export interface ExtractedMessageData {
   memberCount?: number;
   text?: string;
   messageType: MessageTypeValue;
-  telegramUserId?: string;
-  userName?: string;
-  userUsername?: string;
   replyToId?: string;
   editedAt?: Date;
 }
-
-// Platform types
 export type SupportedPlatform = 'telegram' | 'whatsapp';
 export type PlatformMessage = TelegramMessage | WhatsAppMessage;

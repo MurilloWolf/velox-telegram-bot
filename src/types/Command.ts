@@ -5,29 +5,28 @@ export interface CommandInput {
   args?: string[];
   platform?: string;
   raw?: unknown;
-  callbackData?: CallbackData; // For typed button callbacks
-  messageId?: number | string; // Para identificar mensagens
+  callbackData?: CallbackData;
+  messageId?: number | string;
 }
 
 export interface InteractionButton {
   text: string;
   callbackData?: CallbackData;
-  url?: string; // For URL buttons
+  url?: string;
 }
 
 export interface InteractionKeyboard {
   buttons: InteractionButton[][];
-  inline?: boolean; // true para inline keyboards, false para reply keyboards
+  inline?: boolean;
 }
-
 export interface CommandOutput {
   text: string;
   format?: 'markdown' | 'html' | 'markdownV2' | string;
   messages?: string[];
-  keyboard?: InteractionKeyboard; // Keyboard/buttons for interaction
-  editMessage?: boolean; // Whether to edit existing message instead of sending new one
+  keyboard?: InteractionKeyboard;
+  editMessage?: boolean;
   location?: {
     latitude: number;
     longitude: number;
-  }; // For sending location
+  };
 }

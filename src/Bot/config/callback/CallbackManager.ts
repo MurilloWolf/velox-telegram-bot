@@ -24,7 +24,7 @@ class CallbackManager {
         userId: input.user?.id?.toString(),
       });
       return {
-        text: '❌ Ação não encontrada ou expirada.',
+        text: '❌ Ação não encontrada.',
         format: 'HTML',
       };
     }

@@ -5,8 +5,8 @@ import startTelegramBot from './adapters/in/telegram/TelegramBotAdapter.ts';
 import { initializeCallbacks } from './Bot/config/callback/CallbackInitializer.ts';
 import { logger } from './utils/Logger.ts';
 import { HealthCheckAdapter } from './adapters/in/http/HealthCheckAdapter.ts';
-import { BotHealthMonitor } from './services/BotHealthMonitor.ts';
-import { alertService } from './services/AlertService.ts';
+import { BotHealthMonitor } from './services/Health/BotHealthMonitor.ts';
+import { alertService } from './services/Alert/AlertService.ts';
 
 async function main() {
   logger.botStartup('Iniciando DashBot...');
@@ -14,7 +14,6 @@ async function main() {
   const healthServer = new HealthCheckAdapter(3001);
   healthServer.start();
 
-  // Inicializar monitoramento de saúde com alertas (apenas em produção)
   let healthMonitor: BotHealthMonitor | null = null;
   if (
     process.env.NODE_ENV === 'production' &&
@@ -42,7 +41,6 @@ async function main() {
     });
   }
 
-  // Initialize callbacks before starting the bots
   logger.info('Inicializando sistema de callbacks...', {
     module: 'Bot',
     action: 'initialize_callbacks',
@@ -80,9 +78,7 @@ async function main() {
 
     logger.botStartup('DashBot inicializado com sucesso!');
 
-    // Ativar o monitoramento após inicialização bem-sucedida
     if (healthMonitor) {
-      // Aguardar 10 segundos para o bot estar totalmente inicializado
       setTimeout(async () => {
         try {
           healthMonitor!.startMonitoring();
@@ -90,7 +86,6 @@ async function main() {
             module: 'Bot',
           });
 
-          // Enviar alerta de inicialização bem-sucedida
           await alertService.sendStartupAlert({
             platform: BOT_PLATFORM || 'unknown',
             environment: process.env.NODE_ENV || 'development',
@@ -107,13 +102,11 @@ async function main() {
       }, 10000);
     }
 
-    // Graceful shutdown
     const gracefulShutdown = async (signal: string) => {
       logger.info(`Received ${signal}, shutting down gracefully...`, {
         module: 'Bot',
       });
 
-      // Enviar alerta de shutdown
       await alertService.sendShutdownAlert({
         signal,
         uptime: process.uptime(),
@@ -124,7 +117,6 @@ async function main() {
         healthMonitor.stopMonitoring();
       }
 
-      // Aguardar um pouco para garantir que os alertas sejam enviados
       setTimeout(() => {
         logger.info('Process exiting...', { module: 'Bot' });
         process.exit(0);
@@ -135,7 +127,6 @@ async function main() {
     process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
     process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2')); // Para nodemon/tsx
 
-    // Handler para uncaught exceptions
     process.on('uncaughtException', async error => {
       logger.error('Uncaught Exception', { module: 'Bot' }, error);
 
@@ -146,13 +137,11 @@ async function main() {
         timestamp: new Date(),
       });
 
-      // Aguardar o alerta ser enviado antes de sair
       setTimeout(() => {
         process.exit(1);
       }, 2000);
     });
 
-    // Handler para unhandled promise rejections
     process.on('unhandledRejection', async (reason, promise) => {
       logger.error(
         'Unhandled Promise Rejection',
@@ -176,7 +165,6 @@ async function main() {
       error as Error
     );
 
-    // Enviar alerta de erro crítico de inicialização
     await alertService.sendCriticalAlert({
       message: `Bot startup failed: ${(error as Error).message}`,
       stack: (error as Error).stack,
@@ -184,7 +172,6 @@ async function main() {
       timestamp: new Date(),
     });
 
-    // Aguardar o alerta ser enviado antes de sair
     setTimeout(() => {
       process.exit(1);
     }, 2000);

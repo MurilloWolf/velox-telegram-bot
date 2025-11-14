@@ -4,7 +4,6 @@ import {
   CallbackData,
 } from '../../../../../types/callbacks/index.ts';
 import { BaseCallbackHandler } from '@bot/commands/shared/handlers/BaseCallbackHandler.ts';
-import { CallbackDataSerializer } from '@bot/config/callback/CallbackDataSerializer.ts';
 
 export class NavigationCallbackHandler extends BaseCallbackHandler {
   canHandle(callbackData: CallbackData): boolean {
@@ -32,11 +31,6 @@ export class NavigationCallbackHandler extends BaseCallbackHandler {
   }
 
   private handleBack(target: string): CommandOutput {
-    // Implement backward navigation logic based on target
-    if (target === 'search_menu') {
-      return this.createSearchMenuOutput();
-    }
-
     return {
       text: `⬅️ Voltando para: ${target}`,
       format: 'HTML',
@@ -44,43 +38,7 @@ export class NavigationCallbackHandler extends BaseCallbackHandler {
     };
   }
 
-  private createSearchMenuOutput(): CommandOutput {
-    const filterButtons = [
-      [
-        {
-          text: '5km a 9km',
-          callbackData: CallbackDataSerializer.racesSearch(5, 9),
-        },
-      ],
-      [
-        {
-          text: '10km a 20km',
-          callbackData: CallbackDataSerializer.racesSearch(10, 20),
-        },
-      ],
-      [{ text: '21km', callbackData: CallbackDataSerializer.racesFilter(21) }],
-      [{ text: '42km', callbackData: CallbackDataSerializer.racesFilter(42) }],
-      [
-        {
-          text: '📋 Ver Todas',
-          callbackData: CallbackDataSerializer.racesList(),
-        },
-      ],
-    ];
-
-    return {
-      text: `🏃‍♂️ <strong>Próximas corridas</strong>\n\n📌 Selecione uma corrida para ver mais detalhes ou use os filtros por distância:`,
-      format: 'HTML',
-      editMessage: true,
-      keyboard: {
-        buttons: [...filterButtons],
-        inline: true,
-      },
-    };
-  }
-
   private handleNext(target: string): CommandOutput {
-    // Implement forward navigation logic based on target
     return {
       text: `➡️ Navegando para: ${target}`,
       format: 'HTML',

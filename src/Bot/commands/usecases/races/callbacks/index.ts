@@ -1,9 +1,2 @@
-export { RaceDetailsCallbackHandler } from './raceDetails.ts';
-export { RaceUnfavoriteCallbackHandler } from './raceUnfavorite.ts';
-export { RaceListCallbackHandler } from './raceList.ts';
-export { RaceListFavoriteCallbackHandler } from './raceListFavorite.ts';
-export { RaceFilterCallbackHandler } from './raceFilter.ts';
-export { RaceLocationCallbackHandler } from './raceLocation.ts';
-export { RaceReminderCallbackHandler } from './raceReminder.ts';
-export { RaceSearchCallbackHandler } from './raceSearch.ts';
-export { RaceFavoriteCallbackHandler } from './raceFavorite.ts';
+// Empty callbacks index - ready for future implementation
+export const callbackHandlers = [];

@@ -1,7 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { logger } from '../../utils/Logger.ts';
 
-// Backend response structure
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data: T;
@@ -9,7 +8,6 @@ export interface ApiResponse<T = unknown> {
   error?: string;
 }
 
-// Custom error for API failures
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -21,7 +19,6 @@ export class ApiError extends Error {
   }
 }
 
-// Custom response type that returns only the data
 export interface HttpResponse<T> {
   data: T;
   status: number;
@@ -158,5 +155,4 @@ export class HttpClient {
   }
 }
 
-// Singleton instance
 export const httpClient = new HttpClient();

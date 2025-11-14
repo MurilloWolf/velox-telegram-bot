@@ -95,7 +95,6 @@ export class WhatsAppPlatformAdapter implements PlatformAdapter {
         },
         error as Error
       );
-      // Fallback to simple text
       await this.whatsAppClient.sendMessage(chatId, {
         type: 'text',
         text: {

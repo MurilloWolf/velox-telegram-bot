@@ -1,5 +1,5 @@
-import { httpClient } from './http/HttpClient.ts';
-import { logger } from '../utils/Logger.ts';
+import { httpClient } from '../http/HttpClient.ts';
+import { logger } from '../../utils/Logger.ts';
 
 export interface HealthStatus {
   status: 'healthy' | 'unhealthy';

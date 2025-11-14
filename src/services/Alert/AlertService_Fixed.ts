@@ -1,4 +1,4 @@
-import { logger } from '../utils/Logger.js';
+import { logger } from '../../utils/Logger.ts';
 
 export interface AlertConfig {
   botToken: string;

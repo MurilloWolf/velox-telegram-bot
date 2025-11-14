@@ -1,11 +1,4 @@
-/**
- * Utilitário para criar resumos simples das respostas do bot baseado no comando
- */
-
 export class MessageSanitizer {
-  /**
-   * Cria um resumo simples da resposta do bot baseado no comando original
-   */
   static createCommandSummary(commandText: string): string {
     const command = this.extractCommand(commandText);
 
@@ -37,15 +30,11 @@ export class MessageSanitizer {
     }
   }
 
-  /**
-   * Extrai o comando principal do texto
-   */
   private static extractCommand(text: string): string {
     if (!text.startsWith('/')) {
       return text;
     }
 
-    // Pega apenas o comando, sem argumentos
     const parts = text.split(' ');
     return parts[0].toLowerCase();
   }

@@ -9,7 +9,7 @@ export interface PlatformAdapter {
     output: CommandOutput
   ): Promise<void>;
   handleCallback?(
-    callbackData: string, // Keeps string as it comes serialized from platform
+    callbackData: string,
     chatId: string | number,
     messageId: string | number,
     userId: string | number

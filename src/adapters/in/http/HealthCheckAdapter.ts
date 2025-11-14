@@ -58,7 +58,6 @@ export class HealthCheckAdapter {
       timestamp: new Date().toISOString(),
     };
 
-    // Health check focado apenas no bot - se o bot está healthy, o serviço está healthy
     const isHealthy = checks.bot.status === 'healthy';
 
     return {

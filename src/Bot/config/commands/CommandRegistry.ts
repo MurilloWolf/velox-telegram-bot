@@ -25,7 +25,6 @@ export class CommandRegistry {
     });
 
     await this.registerCommandsFromModule('races');
-    await this.registerCommandsFromModule('user');
 
     logger.moduleRegistration('CommandRegistry', 'command', this.commands.size);
   }
@@ -42,20 +41,6 @@ export class CommandRegistry {
 
     try {
       switch (moduleName) {
-        case 'races': {
-          const { raceCommands } = await import(
-            '../../commands/usecases/races/index.ts'
-          );
-          this.registerCommands(raceCommands, 'races');
-          break;
-        }
-        case 'user': {
-          const { userCommands } = await import(
-            '../../commands/usecases/user/index.ts'
-          );
-          this.registerCommands(userCommands, 'user');
-          break;
-        }
         default:
           logger.warn(`Módulo desconhecido: ${moduleName}`, {
             module: 'CommandRegistry',
@@ -64,8 +49,6 @@ export class CommandRegistry {
           });
           return;
       }
-
-      this.registeredModules.add(moduleName);
     } catch (error) {
       logger.error(
         `Erro ao registrar comandos do módulo ${moduleName}`,
