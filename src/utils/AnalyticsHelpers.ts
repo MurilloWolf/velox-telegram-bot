@@ -31,6 +31,14 @@ export interface AnalyticsHelpers {
     filterValue: string | number,
     props?: TrackingProps
   ) => Promise<void>;
+  trackRaceFavoriteAction: (
+    action: 'FAVORITE_ADD' | 'FAVORITE_REMOVE',
+    raceId: string,
+    raceTitle?: string,
+    distances?: string[],
+    city?: string,
+    props?: TrackingProps
+  ) => Promise<void>;
   trackEvent: (
     event: Omit<TrackingEvent, 'channel' | 'sessionId' | 'deviceId'>
   ) => Promise<void>;
@@ -70,15 +78,18 @@ export function useAnalytics(
 
       await analyticsApiService.trackEvent(trackingEvent);
     } catch (error) {
+      // Log error but don't throw to prevent bot crashes
       logger.error(
-        'Failed to track event',
+        'Failed to track event - continuing without analytics',
         {
           module: 'useAnalytics',
-          event,
-          telegramContext,
+          event: event.action,
+          targetType: event.targetType,
+          telegramContext: { userId: telegramContext.userId },
         },
         error as Error
       );
+      // Continue execution - analytics failure should not break bot functionality
     }
   };
 
@@ -200,11 +211,50 @@ export function useAnalytics(
     });
   };
 
+  const trackRaceFavoriteAction = async (
+    action: 'FAVORITE_ADD' | 'FAVORITE_REMOVE',
+    raceId: string,
+    raceTitle?: string,
+    distances?: string[],
+    city?: string,
+    props?: TrackingProps
+  ): Promise<void> => {
+    const eventProps: Record<string, string> = {
+      race_id: raceId,
+      favorite_status: action === 'FAVORITE_ADD' ? 'added' : 'removed',
+    };
+
+    if (raceTitle) {
+      eventProps.race_title = raceTitle;
+    }
+    if (distances && distances.length > 0) {
+      eventProps.distances = distances.join(', ');
+    }
+    if (city) {
+      eventProps.city = city;
+    }
+    if (props) {
+      Object.entries(props).forEach(([key, value]) => {
+        if (value !== undefined) {
+          eventProps[key] = value;
+        }
+      });
+    }
+
+    await trackEvent({
+      action,
+      targetType: 'RACE_EVENT',
+      targetId: `race:${raceId}`,
+      props: eventProps,
+    });
+  };
+
   return {
     trackRaceView,
     trackRaceLocationClick,
     trackRaceRegistrationClick,
     trackFilterChange,
+    trackRaceFavoriteAction,
     trackEvent,
   };
 }

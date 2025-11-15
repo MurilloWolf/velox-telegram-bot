@@ -31,9 +31,45 @@ export interface RaceRegistrationCallbackData extends BaseCallbackData {
   uf?: string;
 }
 
+export interface RaceFavoriteCallbackData extends BaseCallbackData {
+  type: 'race_favorite';
+  raceId: string;
+}
+
+export interface RaceUnfavoriteCallbackData extends BaseCallbackData {
+  type: 'race_unfavorite';
+  raceId: string;
+}
+
+export interface RaceDetailsCallbackData extends BaseCallbackData {
+  type: 'race_details';
+  raceId: string;
+  source?: string;
+}
+
+export interface RaceListCallbackData extends BaseCallbackData {
+  type: 'races_list';
+  distance?: number;
+}
+
+export interface RacesListFavoriteCallbackData extends BaseCallbackData {
+  type: 'races_list_favorite';
+}
+
+export interface RaceFilterCallbackData extends BaseCallbackData {
+  type: 'races_filter';
+  distance: number;
+}
+
 export type RaceCallbackData =
   | UfFilterCallbackData
   | RaceDetailCallbackData
   | RaceLocationCallbackData
   | DistanceFilterCallbackData
-  | RaceRegistrationCallbackData;
+  | RaceRegistrationCallbackData
+  | RaceFavoriteCallbackData
+  | RaceUnfavoriteCallbackData
+  | RaceDetailsCallbackData
+  | RaceListCallbackData
+  | RacesListFavoriteCallbackData
+  | RaceFilterCallbackData;

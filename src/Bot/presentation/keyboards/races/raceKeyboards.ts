@@ -1,6 +1,7 @@
 import { InteractionButton } from '../../../../types/Command.ts';
 import { CallbackDataSerializer } from '../../../config/callback/CallbackDataSerializer.ts';
 import { Race } from '../../../../types/Service.ts';
+import { FavoriteRace } from '../../../../services/index.ts';
 import { getUfFullName } from '../../messages/races/raceMessages.ts';
 
 export const raceKeyboards = {
@@ -90,7 +91,11 @@ export const raceKeyboards = {
       },
     ]),
 
-  createRaceDetailButtons: (race: Race, uf?: string): InteractionButton[][] => {
+  createRaceDetailButtons: (
+    race: Race,
+    uf?: string,
+    isFavorited?: boolean
+  ): InteractionButton[][] => {
     const buttons: InteractionButton[][] = [];
 
     const mainActions: InteractionButton[] = [
@@ -108,6 +113,19 @@ export const raceKeyboards = {
     }
 
     buttons.push(mainActions);
+
+    // Adicionar botão de favorito/desfavoritar
+    const favoriteButton: InteractionButton = isFavorited
+      ? {
+          text: '💔 Desfavoritar',
+          callbackData: CallbackDataSerializer.raceUnfavorite(race.id),
+        }
+      : {
+          text: '❤️ Favoritar',
+          callbackData: CallbackDataSerializer.raceFavorite(race.id),
+        };
+
+    buttons.push([favoriteButton]);
 
     if (uf && (uf === 'SP' || uf === 'PR')) {
       buttons.push([
@@ -129,6 +147,69 @@ export const raceKeyboards = {
       {
         text: '⬅️ Voltar aos Detalhes',
         callbackData: CallbackDataSerializer.raceDetail(raceId, uf),
+      },
+    ],
+  ],
+
+  // Keyboards para listagem geral de corridas (sem filtro de UF)
+  createGeneralRaceListButtons: (races: Race[]): InteractionButton[][] =>
+    races.slice(0, 10).map(race => [
+      {
+        text: `🏃‍♂️ ${race.title} - ${race.distances.join('/')}`,
+        callbackData: CallbackDataSerializer.raceDetails(race.id),
+      },
+    ]),
+
+  createGeneralRaceFilterButtons: (): InteractionButton[][] => [
+    [
+      { text: '5km', callbackData: CallbackDataSerializer.racesFilter(5) },
+      { text: '10km', callbackData: CallbackDataSerializer.racesFilter(10) },
+      { text: '21km', callbackData: CallbackDataSerializer.racesFilter(21) },
+    ],
+    [
+      { text: '42km', callbackData: CallbackDataSerializer.racesFilter(42) },
+      { text: '📋 Todas', callbackData: CallbackDataSerializer.racesList() },
+      {
+        text: '⭐ Favoritas',
+        callbackData: CallbackDataSerializer.racesListFavorite(),
+      },
+    ],
+  ],
+
+  createGeneralRaceListNavigationButtons: (): InteractionButton[][] => [
+    [
+      {
+        text: '⭐ Ver Favoritas',
+        callbackData: CallbackDataSerializer.racesListFavorite(),
+      },
+    ],
+  ],
+
+  createBackToGeneralListButtons: (): InteractionButton[][] => [
+    [
+      {
+        text: '⬅️ Voltar',
+        callbackData: CallbackDataSerializer.racesList(),
+      },
+    ],
+  ],
+
+  // Keyboards para corridas favoritas
+  createFavoriteRaceListButtons: (
+    races: FavoriteRace[]
+  ): InteractionButton[][] =>
+    races.slice(0, 10).map(race => [
+      {
+        text: `🏃‍♂️ ${race.title} - ${race.distances.join('/')}`,
+        callbackData: CallbackDataSerializer.raceDetails(race.id),
+      },
+    ]),
+
+  createNavigationToAllRacesButtons: (): InteractionButton[][] => [
+    [
+      {
+        text: '🏃‍♂️ Ver Todas as Corridas',
+        callbackData: CallbackDataSerializer.racesList(),
       },
     ],
   ],

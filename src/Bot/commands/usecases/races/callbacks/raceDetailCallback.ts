@@ -5,6 +5,7 @@ import {
   RaceDetailCallbackData,
 } from '../../../../../types/callbacks/index.ts';
 import { raceApiService } from '../../../../../services/RaceApiService.ts';
+import { favoriteApiService } from '../../../../../services/FavoriteApiService.ts';
 import { raceDetailView } from '../../../../presentation/views/races/raceDetailView.ts';
 import { logger } from '../../../../../utils/Logger.ts';
 import { quickTrackRaceView } from '../../../../../utils/AnalyticsHelpers.ts';
@@ -31,6 +32,25 @@ export class RaceDetailCallbackHandler implements CallbackHandler {
 
       if (!race) {
         return raceDetailView.createRaceNotFoundView();
+      }
+
+      // Verificar se a corrida é favorita
+      let isFavorited = false;
+      const telegramId = input.user?.id?.toString();
+      if (telegramId) {
+        try {
+          isFavorited = await favoriteApiService.isRaceFavorited(
+            telegramId,
+            raceId
+          );
+        } catch {
+          logger.warn('Failed to check favorite status', {
+            module: 'RaceDetailCallbackHandler',
+            raceId,
+            userId: telegramId,
+          });
+          isFavorited = false;
+        }
       }
 
       if (input.user?.id) {
@@ -66,7 +86,7 @@ export class RaceDetailCallbackHandler implements CallbackHandler {
         }
       }
 
-      return raceDetailView.createRaceDetailView(race, uf);
+      return raceDetailView.createRaceDetailView(race, uf, isFavorited);
     } catch (error) {
       logger.error(
         'Error in RaceDetailCallbackHandler',

@@ -28,49 +28,50 @@ export class DistanceFilterCallbackHandler implements CallbackHandler {
         userId: input.user?.id?.toString(),
       });
 
+      // Track analytics (non-blocking)
       if (input.user?.id) {
-        try {
-          const telegramContext: TelegramContext = {
-            userId:
-              typeof input.user.id === 'number'
-                ? input.user.id
-                : parseInt(String(input.user.id)),
-            chatId: 0, // Chat ID not available in this context
-            messageId:
-              typeof input.messageId === 'number' ? input.messageId : undefined,
-            username: input.user.name,
-          };
+        const telegramContext: TelegramContext = {
+          userId:
+            typeof input.user.id === 'number'
+              ? input.user.id
+              : parseInt(String(input.user.id)),
+          chatId: 0, // Chat ID not available in this context
+          messageId:
+            typeof input.messageId === 'number' ? input.messageId : undefined,
+          username: input.user.name,
+        };
 
-          const analytics = useAnalytics(telegramContext);
-          await analytics.trackFilterChange('distance', distance, {
+        const analytics = useAnalytics(telegramContext);
+        // Fire and forget - don't await to prevent blocking on analytics errors
+        analytics
+          .trackFilterChange('distance', distance, {
             active: 'true',
             uf: uf,
+          })
+          .catch(error => {
+            logger.error(
+              'Analytics tracking failed (non-blocking)',
+              {
+                module: 'DistanceFilterCallbackHandler',
+                distance,
+                uf,
+                userId: input.user?.id ? String(input.user.id) : 'unknown',
+              },
+              error as Error
+            );
           });
-        } catch (error) {
-          logger.error(
-            'Failed to track distance filter',
-            {
-              module: 'DistanceFilterCallbackHandler',
-              distance,
-              uf,
-              userId: String(input.user.id),
-            },
-            error as Error
-          );
-        }
       }
 
-      let races;
+      // Get races from API
+      const races = await raceApiService.getRacesByUf(uf);
 
-      if (distance === 'ALL') {
-        races = await raceApiService.getRacesByUf(uf);
-      } else {
-        // Buscar todas as corridas do UF e filtrar client-side
-        const allRaces = await raceApiService.getRacesByUf(uf);
+      let filteredRaces = races;
+
+      // Apply distance filter if not ALL
+      if (distance !== 'ALL') {
         const distanceRange = this.mapDistanceToRange(distance);
 
-        // Filtrar corridas que possuem as distâncias desejadas
-        races = allRaces.filter(race => {
+        filteredRaces = races.filter(race => {
           if (!race.distancesNumbers || !Array.isArray(race.distancesNumbers)) {
             return false;
           }
@@ -81,11 +82,15 @@ export class DistanceFilterCallbackHandler implements CallbackHandler {
         });
       }
 
-      if (!races || races.length === 0) {
+      if (!filteredRaces || filteredRaces.length === 0) {
         return distanceFilterView.createNoRacesFoundView(uf, distance);
       }
 
-      return distanceFilterView.createFilteredRacesView(races, uf, distance);
+      return distanceFilterView.createFilteredRacesView(
+        filteredRaces,
+        uf,
+        distance
+      );
     } catch (error) {
       logger.error('Failed to filter races by distance', {
         module: 'DistanceFilterCallbackHandler',

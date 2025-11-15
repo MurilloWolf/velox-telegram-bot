@@ -10,6 +10,15 @@ export const raceMessages = {
       const distanceLabel = getDistanceLabel(distance);
       return `🏃‍♂️ <strong>Corridas ${distanceLabel} em ${getUfFullName(uf)}</strong> (${count})\n\nSelecione uma corrida para ver mais detalhes:`;
     },
+    // Mensagens para listagem geral de corridas (sem filtro de UF)
+    allRacesAvailable: (count: number) =>
+      `🏃‍♂️ <strong>Corridas Disponíveis</strong>\\n\\nEncontradas ${count} corrida(s). Selecione uma para ver detalhes:`,
+    racesForDistance: (distance: number, count: number) =>
+      `🏃‍♂️ <strong>Corridas de ${distance}km</strong>\\n\\nEncontradas ${count} corrida(s):`,
+    // Mensagens para corridas favoritas
+    favoritesList: (count: number) =>
+      `⭐ <strong>Suas Corridas Favoritas</strong> (${count})\\n\\nSelecione uma corrida para ver mais detalhes:`,
+    noFavorites: `📝 <b>Suas Corridas Favoritas</b>\\n\\n❌ Você ainda não tem corridas favoritas!\\n\\n💡 Para favoritar uma corrida, use o comando /corridas e clique no botão ❤️ de uma corrida.`,
   },
 
   errors: {
@@ -19,6 +28,9 @@ export const raceMessages = {
       const distanceLabel = getDistanceLabel(distance);
       return `❌ Nenhuma corrida ${distanceLabel} encontrada em ${getUfFullName(uf)}.`;
     },
+    noRacesAvailable: '❌ Nenhuma corrida disponível no momento!',
+    noRacesFoundForDistance: (distance: number) =>
+      `❌ Nenhuma corrida encontrada para a distância: ${distance}km`,
     genericError: '❌ Erro ao buscar corridas. Tente novamente mais tarde.',
     raceNotFound: '❌ Corrida não encontrada ou não está mais disponível.',
     noLocation: '❌ Localização não disponível para esta corrida.',

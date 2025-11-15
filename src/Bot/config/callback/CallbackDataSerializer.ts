@@ -6,6 +6,12 @@ import {
   RaceLocationCallbackData,
   DistanceFilterCallbackData,
   RaceRegistrationCallbackData,
+  RaceFavoriteCallbackData,
+  RaceUnfavoriteCallbackData,
+  RaceDetailsCallbackData,
+  RaceListCallbackData,
+  RacesListFavoriteCallbackData,
+  RaceFilterCallbackData,
 } from '../../../types/callbacks/index.ts';
 
 export class CallbackDataSerializer {
@@ -34,6 +40,29 @@ export class CallbackDataSerializer {
       case 'race_registration': {
         const registrationData = data as RaceRegistrationCallbackData;
         return `registration:${registrationData.raceId}${registrationData.uf ? `:${registrationData.uf}` : ''}`;
+      }
+      case 'race_favorite': {
+        const favoriteData = data as RaceFavoriteCallbackData;
+        return `fav:${favoriteData.raceId}`;
+      }
+      case 'race_unfavorite': {
+        const unfavoriteData = data as RaceUnfavoriteCallbackData;
+        return `unfav:${unfavoriteData.raceId}`;
+      }
+      case 'race_details': {
+        const detailsData = data as RaceDetailsCallbackData;
+        return `details:${detailsData.raceId}${detailsData.source ? `:${detailsData.source}` : ''}`;
+      }
+      case 'races_list': {
+        const listData = data as RaceListCallbackData;
+        return `list${listData.distance ? `:${listData.distance}` : ''}`;
+      }
+      case 'races_list_favorite': {
+        return 'listfav';
+      }
+      case 'races_filter': {
+        const filterData = data as RaceFilterCallbackData;
+        return `filter:${filterData.distance}`;
       }
       default: {
         const unknownData = data as { type: string };
@@ -88,6 +117,42 @@ export class CallbackDataSerializer {
           uf: parts[2] || undefined,
         } as RaceRegistrationCallbackData;
       }
+      case 'fav': {
+        return {
+          type: 'race_favorite',
+          raceId: parts[1],
+        } as RaceFavoriteCallbackData;
+      }
+      case 'unfav': {
+        return {
+          type: 'race_unfavorite',
+          raceId: parts[1],
+        } as RaceUnfavoriteCallbackData;
+      }
+      case 'details': {
+        return {
+          type: 'race_details',
+          raceId: parts[1],
+          source: parts[2] || undefined,
+        } as RaceDetailsCallbackData;
+      }
+      case 'list': {
+        return {
+          type: 'races_list',
+          distance: parts[1] ? parseInt(parts[1]) : undefined,
+        } as RaceListCallbackData;
+      }
+      case 'listfav': {
+        return {
+          type: 'races_list_favorite',
+        } as RacesListFavoriteCallbackData;
+      }
+      case 'filter': {
+        return {
+          type: 'races_filter',
+          distance: parseInt(parts[1]),
+        } as RaceFilterCallbackData;
+      }
       default:
         throw new Error(`Prefixo de callback não reconhecido: ${prefix}`);
     }
@@ -134,5 +199,29 @@ export class CallbackDataSerializer {
     uf?: string
   ): RaceRegistrationCallbackData {
     return { type: 'race_registration', raceId, uf };
+  }
+
+  static raceFavorite(raceId: string): RaceFavoriteCallbackData {
+    return { type: 'race_favorite', raceId };
+  }
+
+  static raceUnfavorite(raceId: string): RaceUnfavoriteCallbackData {
+    return { type: 'race_unfavorite', raceId };
+  }
+
+  static raceDetails(raceId: string, source?: string): RaceDetailsCallbackData {
+    return { type: 'race_details', raceId, source };
+  }
+
+  static racesList(distance?: number): RaceListCallbackData {
+    return { type: 'races_list', distance };
+  }
+
+  static racesListFavorite(): RacesListFavoriteCallbackData {
+    return { type: 'races_list_favorite' };
+  }
+
+  static racesFilter(distance: number): RaceFilterCallbackData {
+    return { type: 'races_filter', distance };
   }
 }

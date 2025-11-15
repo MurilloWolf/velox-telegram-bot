@@ -1,6 +1,7 @@
 # 🤖 AI Agent Interaction Guide - DashBot
 
 ## 📋 Índice
+
 - [Visão Geral](#visão-geral)
 - [Arquitetura do Projeto](#arquitetura-do-projeto)
 - [Estrutura de Diretórios](#estrutura-de-diretórios)
@@ -17,6 +18,7 @@
 **DashBot** é um bot multiplataforma (foco em Telegram) para corridas de rua, desenvolvido com **Clean Architecture** + **Domain Driven Design**. Este documento orienta agentes IA sobre como interagir efetivamente com o projeto.
 
 ### Stack Principal
+
 - **Node.js + TypeScript** (ES Modules, strict mode)
 - **Vitest** para testes
 - **Custom HTTP Client** para APIs externas
@@ -25,6 +27,7 @@
 - **Fly.io** para deploy
 
 ### Domínios de Negócio
+
 1. **Corridas** - Listagem, busca, detalhes, lembretes
 2. **Usuários** - Registro, preferências, perfil
 3. **Mensagens** - Histórico, interceptação, tracking
@@ -65,6 +68,7 @@
 ```
 
 ### Fluxo Principal
+
 1. **Recepção**: Adapter recebe mensagem/callback da plataforma
 2. **Roteamento**: CommandRouter identifica e roteia comando
 3. **Interceptação**: MessageInterceptor salva mensagem de entrada
@@ -117,7 +121,7 @@ O projeto segue organização por **Use Cases** dentro de cada domínio:
 Bot/commands/usecases/
 ├── races/                # Domínio: Corridas
 │   ├── commands/         #   Comandos de corridas
-│   ├── callbacks/        #   Callbacks de corridas  
+│   ├── callbacks/        #   Callbacks de corridas
 │   └── index.ts          #   Exportações do domínio
 ├── users/                # Domínio: Usuários (futuro)
 └── shared/               # Compartilhado entre domínios
@@ -164,8 +168,10 @@ export class RaceApiService {
 
   async getAvailableRaces(): Promise<Race[]> {
     try {
-      const response = await httpClient.get<Race[]>(`${this.baseUrl}/available`);
-      
+      const response = await httpClient.get<Race[]>(
+        `${this.baseUrl}/available`
+      );
+
       logger.info('Retrieved available races', {
         module: 'RaceApiService',
         action: 'get_available_races',
@@ -174,10 +180,14 @@ export class RaceApiService {
 
       return response.data;
     } catch (error) {
-      logger.error('Error retrieving races', {
-        module: 'RaceApiService',
-        action: 'get_available_races',
-      }, error as Error);
+      logger.error(
+        'Error retrieving races',
+        {
+          module: 'RaceApiService',
+          action: 'get_available_races',
+        },
+        error as Error
+      );
       throw error;
     }
   }
@@ -362,10 +372,10 @@ export class RaceDetailsCallbackHandler implements CallbackHandler {
 
   async handle(input: CommandInput): Promise<CommandOutput> {
     const data = input.callbackData as RaceDetailsCallbackData;
-    
+
     // Buscar dados
     const race = await raceApiService.getRaceById(data.raceId);
-    
+
     // Construir resposta
     return {
       text: this.formatRaceDetails(race),
@@ -417,11 +427,15 @@ export class UserApiService {
 
       return response.data; // ← dados diretos, sem response.data.data
     } catch (error) {
-      logger.error('Error registering user', {
-        module: 'UserApiService',
-        action: 'register_user',
-        telegramId,
-      }, error as Error);
+      logger.error(
+        'Error registering user',
+        {
+          module: 'UserApiService',
+          action: 'register_user',
+          telegramId,
+        },
+        error as Error
+      );
       throw error;
     }
   }
@@ -456,12 +470,16 @@ try {
   const result = await someService.doSomething();
   return { text: 'Success!', format: 'HTML' };
 } catch (error) {
-  logger.error('Operation failed', {
-    module: 'ModuleName',
-    action: 'action_name',
-    userId: input.user?.id,
-  }, error as Error);
-  
+  logger.error(
+    'Operation failed',
+    {
+      module: 'ModuleName',
+      action: 'action_name',
+      userId: input.user?.id,
+    },
+    error as Error
+  );
+
   return {
     text: '❌ Erro interno. Tente novamente.',
     format: 'HTML',
@@ -481,11 +499,15 @@ logger.info('Operation completed', {
 });
 
 // Log de erro
-logger.error('Operation failed', {
-  module: 'ModuleName',
-  action: 'action_name',
-  userId: 'user123',
-}, error as Error);
+logger.error(
+  'Operation failed',
+  {
+    module: 'ModuleName',
+    action: 'action_name',
+    userId: 'user123',
+  },
+  error as Error
+);
 
 // Log específicos do bot
 logger.commandExecution('listRaces', userId);
@@ -502,7 +524,10 @@ const buttons: InteractionButton[][] = [
     { text: '🏃‍♂️ 10km', callbackData: CallbackDataSerializer.racesFilter(10) },
   ],
   [
-    { text: '⬅️ Voltar', callbackData: CallbackDataSerializer.navigation('back') },
+    {
+      text: '⬅️ Voltar',
+      callbackData: CallbackDataSerializer.navigation('back'),
+    },
   ],
 ];
 
@@ -538,7 +563,9 @@ describe('listRacesCommand', () => {
 
   it('should return races with keyboard when races exist', async () => {
     // Arrange
-    const mockRaces = [/* mock data */];
+    const mockRaces = [
+      /* mock data */
+    ];
     vi.mocked(raceApiService.getAvailableRaces).mockResolvedValue(mockRaces);
 
     const input: CommandInput = {

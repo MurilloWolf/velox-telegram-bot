@@ -28,7 +28,7 @@ export interface RaceFavoriteStatusData {
 }
 
 export class FavoriteApiService {
-  private readonly baseUrl = '/favorites';
+  private readonly baseUrl = '/favorites/by-external-id';
 
   async addFavoriteRace(
     telegramId: string,
@@ -36,7 +36,7 @@ export class FavoriteApiService {
   ): Promise<FavoriteRace> {
     try {
       const response = await httpClient.post<FavoriteRace>(
-        `${this.baseUrl}/${telegramId}/${raceId}`
+        `${this.baseUrl}/${telegramId}/${raceId}?channel=TELEGRAM`
       );
 
       logger.info('Successfully added race to favorites', {
@@ -80,7 +80,7 @@ export class FavoriteApiService {
   async getUserFavoriteRaces(telegramId: string): Promise<FavoriteRace[]> {
     try {
       const response = await httpClient.get<FavoriteRace[]>(
-        `${this.baseUrl}/${telegramId}`
+        `${this.baseUrl}/${telegramId}?channel=TELEGRAM`
       );
 
       logger.info('Successfully retrieved user favorite races', {
@@ -123,7 +123,9 @@ export class FavoriteApiService {
 
   async removeFavoriteRace(telegramId: string, raceId: string): Promise<void> {
     try {
-      await httpClient.delete(`${this.baseUrl}/${telegramId}/${raceId}`);
+      await httpClient.delete(
+        `${this.baseUrl}/${telegramId}/${raceId}?channel=TELEGRAM`
+      );
 
       logger.info('Successfully removed race from favorites', {
         module: 'FavoriteApiService',
@@ -165,7 +167,7 @@ export class FavoriteApiService {
   ): Promise<ToggleFavoriteData> {
     try {
       const response = await httpClient.put<ToggleFavoriteData>(
-        `${this.baseUrl}/${telegramId}/${raceId}/toggle`
+        `${this.baseUrl}/${telegramId}/${raceId}/toggle?channel=TELEGRAM`
       );
 
       logger.info('Successfully toggled race favorite status', {
@@ -208,7 +210,7 @@ export class FavoriteApiService {
   async isRaceFavorited(telegramId: string, raceId: string): Promise<boolean> {
     try {
       const response = await httpClient.get<RaceFavoriteStatusData>(
-        `${this.baseUrl}/${telegramId}/${raceId}/status`
+        `${this.baseUrl}/${telegramId}/${raceId}/status?channel=TELEGRAM`
       );
 
       logger.info('Successfully checked race favorite status', {

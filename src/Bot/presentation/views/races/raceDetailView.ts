@@ -5,7 +5,11 @@ import { raceKeyboards } from '../../keyboards/races/raceKeyboards.ts';
 import { RaceFormatter } from '../../../../utils/formatters/RaceFormatter.ts';
 
 export const raceDetailView = {
-  createRaceDetailView: (race: Race, uf?: string): CommandOutput => {
+  createRaceDetailView: (
+    race: Race,
+    uf?: string,
+    isFavorited?: boolean
+  ): CommandOutput => {
     let text = RaceFormatter.formatDetailedRaceMessage(race);
 
     // Adiciona link invisível para preview da imagem
@@ -19,7 +23,7 @@ export const raceDetailView = {
       editMessage: true,
       keyboard: {
         inline: true,
-        buttons: raceKeyboards.createRaceDetailButtons(race, uf),
+        buttons: raceKeyboards.createRaceDetailButtons(race, uf, isFavorited),
       },
     };
   },
