@@ -29,13 +29,21 @@ export class HttpClient {
   private api: AxiosInstance;
 
   constructor(baseURL?: string) {
+    const bearerToken = process.env.BOT_BEARER_TOKEN;
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    if (bearerToken) {
+      headers['Authorization'] = `Bearer ${bearerToken}`;
+    }
+
     this.api = axios.create({
       baseURL:
         baseURL || process.env.API_BASE_URL || 'http://localhost:4000/api',
       timeout: 10000,
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
     });
 
     this.setupInterceptors();
@@ -69,14 +77,12 @@ export class HttpClient {
           responseType: typeof response.data,
         });
 
-        // Log response data for debugging (only in debug level)
         logger.debug('API Response Data', {
           module: 'HttpClient',
           url: response.config.url,
           data: response.data,
         });
 
-        // Check if response follows our ApiResponse structure
         const responseData = response.data as ApiResponse;
 
         if (
@@ -85,7 +91,6 @@ export class HttpClient {
           'success' in responseData
         ) {
           if (!responseData.success) {
-            // Backend returned success: false
             const errorMessage =
               responseData.error ||
               responseData.message ||
@@ -100,7 +105,6 @@ export class HttpClient {
             throw new ApiError(errorMessage, response.status, responseData);
           }
 
-          // Create a new response structure with extracted data
           const extractedResponse: HttpResponse<typeof responseData.data> = {
             data: responseData.data,
             status: response.status,
@@ -113,7 +117,6 @@ export class HttpClient {
             extractedData: responseData.data,
           });
 
-          // Return the custom response structure
           return extractedResponse as unknown as typeof response;
         }
 
