@@ -96,7 +96,7 @@ export const raceKeyboards = {
     const mainActions: InteractionButton[] = [
       {
         text: '🔗 Abrir Inscrições',
-        url: race.link,
+        callbackData: CallbackDataSerializer.raceRegistration(race.id, uf),
       },
     ];
 

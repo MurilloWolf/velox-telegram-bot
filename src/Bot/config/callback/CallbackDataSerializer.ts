@@ -5,6 +5,7 @@ import {
   RaceDetailCallbackData,
   RaceLocationCallbackData,
   DistanceFilterCallbackData,
+  RaceRegistrationCallbackData,
 } from '../../../types/callbacks/index.ts';
 
 export class CallbackDataSerializer {
@@ -29,6 +30,10 @@ export class CallbackDataSerializer {
       case 'race_location': {
         const locationData = data as RaceLocationCallbackData;
         return `location:${locationData.raceId}${locationData.uf ? `:${locationData.uf}` : ''}`;
+      }
+      case 'race_registration': {
+        const registrationData = data as RaceRegistrationCallbackData;
+        return `registration:${registrationData.raceId}${registrationData.uf ? `:${registrationData.uf}` : ''}`;
       }
       default: {
         const unknownData = data as { type: string };
@@ -76,6 +81,13 @@ export class CallbackDataSerializer {
           uf: parts[2] || undefined,
         } as RaceLocationCallbackData;
       }
+      case 'registration': {
+        return {
+          type: 'race_registration',
+          raceId: parts[1],
+          uf: parts[2] || undefined,
+        } as RaceRegistrationCallbackData;
+      }
       default:
         throw new Error(`Prefixo de callback não reconhecido: ${prefix}`);
     }
@@ -115,5 +127,12 @@ export class CallbackDataSerializer {
     distance: 'ALL' | '5K-9K' | '10K-21K' | '42K'
   ): DistanceFilterCallbackData {
     return { type: 'distance_filter', uf, distance };
+  }
+
+  static raceRegistration(
+    raceId: string,
+    uf?: string
+  ): RaceRegistrationCallbackData {
+    return { type: 'race_registration', raceId, uf };
   }
 }

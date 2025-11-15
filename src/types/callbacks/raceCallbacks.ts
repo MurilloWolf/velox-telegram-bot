@@ -25,8 +25,15 @@ export interface DistanceFilterCallbackData extends BaseCallbackData {
   distance: 'ALL' | '5K-9K' | '10K-21K' | '42K';
 }
 
+export interface RaceRegistrationCallbackData extends BaseCallbackData {
+  type: 'race_registration';
+  raceId: string;
+  uf?: string;
+}
+
 export type RaceCallbackData =
   | UfFilterCallbackData
   | RaceDetailCallbackData
   | RaceLocationCallbackData
-  | DistanceFilterCallbackData;
+  | DistanceFilterCallbackData
+  | RaceRegistrationCallbackData;

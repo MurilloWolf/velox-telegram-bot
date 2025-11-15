@@ -7,6 +7,8 @@ import {
 import { raceApiService } from '../../../../../services/index.ts';
 import { distanceFilterView } from '../../../../presentation/views/races/distanceFilterView.ts';
 import { logger } from '../../../../../utils/Logger.ts';
+import { useAnalytics } from '../../../../../utils/AnalyticsHelpers.ts';
+import { TelegramContext } from '../../../../../types/Analytics.ts';
 
 export class DistanceFilterCallbackHandler implements CallbackHandler {
   canHandle(callbackData: CallbackData): boolean {
@@ -26,7 +28,38 @@ export class DistanceFilterCallbackHandler implements CallbackHandler {
         userId: input.user?.id?.toString(),
       });
 
-      // Buscar corridas filtradas por UF e distância
+      if (input.user?.id) {
+        try {
+          const telegramContext: TelegramContext = {
+            userId:
+              typeof input.user.id === 'number'
+                ? input.user.id
+                : parseInt(String(input.user.id)),
+            chatId: 0, // Chat ID not available in this context
+            messageId:
+              typeof input.messageId === 'number' ? input.messageId : undefined,
+            username: input.user.name,
+          };
+
+          const analytics = useAnalytics(telegramContext);
+          await analytics.trackFilterChange('distance', distance, {
+            active: 'true',
+            uf: uf,
+          });
+        } catch (error) {
+          logger.error(
+            'Failed to track distance filter',
+            {
+              module: 'DistanceFilterCallbackHandler',
+              distance,
+              uf,
+              userId: String(input.user.id),
+            },
+            error as Error
+          );
+        }
+      }
+
       let races;
 
       if (distance === 'ALL') {

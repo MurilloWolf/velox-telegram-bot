@@ -7,6 +7,8 @@ import {
 import { raceApiService } from '../../../../../services/RaceApiService.ts';
 import { raceLocationView } from '../../../../presentation/views/races/raceLocationView.ts';
 import { logger } from '../../../../../utils/Logger.ts';
+import { quickTrackRaceLocationClick } from '../../../../../utils/AnalyticsHelpers.ts';
+import { TelegramContext } from '../../../../../types/Analytics.ts';
 
 export class RaceLocationCallbackHandler implements CallbackHandler {
   canHandle(callbackData: CallbackData): boolean {
@@ -29,6 +31,37 @@ export class RaceLocationCallbackHandler implements CallbackHandler {
 
       if (!race) {
         return raceLocationView.createRaceNotFoundView();
+      }
+
+      if (input.user?.id) {
+        try {
+          const telegramContext: TelegramContext = {
+            userId:
+              typeof input.user.id === 'number'
+                ? input.user.id
+                : parseInt(String(input.user.id)),
+            chatId: 0, // Chat ID not available in this context
+            messageId:
+              typeof input.messageId === 'number' ? input.messageId : undefined,
+            username: input.user.name,
+          };
+
+          await quickTrackRaceLocationClick(
+            race.id,
+            telegramContext,
+            race.location
+          );
+        } catch (trackingError) {
+          logger.error(
+            'Failed to track race location click',
+            {
+              module: 'RaceLocationCallbackHandler',
+              raceId: race.id,
+              userId: String(input.user.id),
+            },
+            trackingError as Error
+          );
+        }
       }
 
       return raceLocationView.createRaceLocationView(race, uf);
