@@ -4,6 +4,7 @@ import {
   CallbackData,
 } from '../../../../../types/callbacks/index.ts';
 import { BaseCallbackHandler } from '@bot/commands/shared/handlers/BaseCallbackHandler.ts';
+import { raceListView } from '../../../../presentation/views/races/raceListView.ts';
 
 export class NavigationCallbackHandler extends BaseCallbackHandler {
   canHandle(callbackData: CallbackData): boolean {
@@ -31,11 +32,16 @@ export class NavigationCallbackHandler extends BaseCallbackHandler {
   }
 
   private handleBack(target: string): CommandOutput {
-    return {
-      text: `⬅️ Voltando para: ${target}`,
-      format: 'HTML',
-      editMessage: true,
-    };
+    switch (target) {
+      case 'uf_filter':
+        return raceListView.createUfFilterView();
+      default:
+        return {
+          text: `⬅️ Voltando para: ${target}`,
+          format: 'HTML',
+          editMessage: true,
+        };
+    }
   }
 
   private handleNext(target: string): CommandOutput {

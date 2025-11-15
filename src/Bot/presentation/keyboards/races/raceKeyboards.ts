@@ -17,6 +17,71 @@ export const raceKeyboards = {
     ],
   ],
 
+  createDistanceFilterButtons: (uf: 'SP' | 'PR'): InteractionButton[][] => [
+    [
+      {
+        text: '📋 TODAS',
+        callbackData: CallbackDataSerializer.distanceFilter(uf, 'ALL'),
+      },
+    ],
+    [
+      {
+        text: '🏃‍♂️ 5km ~ 9km',
+        callbackData: CallbackDataSerializer.distanceFilter(uf, '5K-9K'),
+      },
+    ],
+    [
+      {
+        text: '🏃‍♂️ 10km ~ 21km',
+        callbackData: CallbackDataSerializer.distanceFilter(uf, '10K-21K'),
+      },
+    ],
+    [
+      {
+        text: '🏃‍♂️ 42km (Maratona)',
+        callbackData: CallbackDataSerializer.distanceFilter(uf, '42K'),
+      },
+    ],
+    [
+      {
+        text: '⬅️ Voltar aos Estados',
+        callbackData: CallbackDataSerializer.navigation('back', 'uf_filter'),
+      },
+    ],
+  ],
+
+  createBackToUfFilterButtons: (uf: string): InteractionButton[][] => [
+    [
+      {
+        text: '🔄 Outras Distâncias',
+        callbackData: CallbackDataSerializer.ufFilter(uf as 'SP' | 'PR'),
+      },
+    ],
+    [
+      {
+        text: '⬅️ Voltar aos Estados',
+        callbackData: CallbackDataSerializer.navigation('back', 'uf_filter'),
+      },
+    ],
+  ],
+
+  createDistanceFilterNavigationButtons: (
+    uf: string
+  ): InteractionButton[][] => [
+    [
+      {
+        text: '🔄 Outras Distâncias',
+        callbackData: CallbackDataSerializer.ufFilter(uf as 'SP' | 'PR'),
+      },
+    ],
+    [
+      {
+        text: '⬅️ Voltar aos Estados',
+        callbackData: CallbackDataSerializer.navigation('back', 'uf_filter'),
+      },
+    ],
+  ],
+
   createRaceListButtons: (races: Race[], uf: string): InteractionButton[][] =>
     races.map(race => [
       {

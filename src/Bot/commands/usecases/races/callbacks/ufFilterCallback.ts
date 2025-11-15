@@ -1,7 +1,10 @@
 import { CommandInput, CommandOutput } from '../../../../../types/Command.ts';
 import { CallbackHandler } from '../../../../../types/PlatformAdapter.ts';
-import { CallbackData } from '../../../../../types/callbacks/index.ts';
-import { listRacesCommand } from '../commands/listRaces.ts';
+import {
+  CallbackData,
+  UfFilterCallbackData,
+} from '../../../../../types/callbacks/index.ts';
+import { distanceFilterView } from '../../../../presentation/views/races/distanceFilterView.ts';
 
 export class UfFilterCallbackHandler implements CallbackHandler {
   canHandle(callbackData: CallbackData): boolean {
@@ -9,7 +12,10 @@ export class UfFilterCallbackHandler implements CallbackHandler {
   }
 
   async handle(input: CommandInput): Promise<CommandOutput> {
-    return await listRacesCommand(input);
+    const data = input.callbackData as UfFilterCallbackData;
+    const { uf } = data;
+
+    return distanceFilterView.createDistanceFilterView(uf);
   }
 }
 

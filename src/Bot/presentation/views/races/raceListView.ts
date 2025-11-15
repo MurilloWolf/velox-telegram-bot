@@ -7,6 +7,7 @@ export const raceListView = {
   createUfFilterView: (): CommandOutput => ({
     text: `${raceMessages.titles.raceList}\n\n${raceMessages.titles.ufFilter}`,
     format: 'HTML',
+    editMessage: true,
     keyboard: {
       inline: true,
       buttons: raceKeyboards.createUfFilterButtons(),

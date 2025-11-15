@@ -37,14 +37,13 @@ export class CallbackRegistry {
           this.registerHandlers(raceCallbackHandlers, 'races');
           break;
         }
-        // REGISTER EXAMPLE
-        // case 'shared': {
-        //   const { sharedCallbackHandlers } = await import(
-        //     '../../commands/usecases/shared/index.ts'
-        //   );
-        //   this.registerHandlers(sharedCallbackHandlers, 'shared');
-        //   break;
-        // }
+        case 'shared': {
+          const { sharedCallbackHandlers } = await import(
+            '../../commands/usecases/shared/index.ts'
+          );
+          this.registerHandlers(sharedCallbackHandlers, 'shared');
+          break;
+        }
         default:
           logger.warn(`Módulo desconhecido: ${moduleName}`, {
             module: 'CallbackRegistry',

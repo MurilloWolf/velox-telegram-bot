@@ -36,6 +36,66 @@ export class RaceApiService {
     }
   }
 
+  async getRacesByUf(uf: string): Promise<Race[]> {
+    try {
+      const response = await httpClient.get<Race[]>(
+        `${this.baseUrl}/available?uf=${uf}`
+      );
+
+      logger.info('Successfully retrieved races by UF', {
+        module: 'RaceApiService',
+        action: 'get_races_by_uf',
+        uf,
+        racesCount: response.data.length,
+      });
+
+      return response.data;
+    } catch (error) {
+      logger.error(
+        'Error getting races by UF',
+        {
+          module: 'RaceApiService',
+          action: 'get_races_by_uf',
+          uf,
+        },
+        error as Error
+      );
+      throw error;
+    }
+  }
+
+  async getRacesByUfAndDistance(
+    uf: string,
+    distanceRange: { min: number; max: number }
+  ): Promise<Race[]> {
+    try {
+      const url = `${this.baseUrl}/available?uf=${uf}&minDistance=${distanceRange.min}&maxDistance=${distanceRange.max}`;
+      const response = await httpClient.get<Race[]>(url);
+
+      logger.info('Successfully retrieved races by UF and distance', {
+        module: 'RaceApiService',
+        action: 'get_races_by_uf_and_distance',
+        uf,
+        distanceRange,
+        racesCount: response.data.length,
+      });
+
+      return response.data;
+    } catch (error) {
+      logger.error(
+        'Error getting races by UF and distance',
+        {
+          module: 'RaceApiService',
+          action: 'get_races_by_uf_and_distance',
+          uf,
+          distanceRange,
+        },
+        error as Error
+      );
+      throw error;
+    }
+  }
+
   async getRaceById(id: string): Promise<Race | null> {
     try {
       const response = await httpClient.get<Race>(`${this.baseUrl}/${id}`);

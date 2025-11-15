@@ -19,7 +19,14 @@ export interface RaceLocationCallbackData extends BaseCallbackData {
   uf?: string;
 }
 
+export interface DistanceFilterCallbackData extends BaseCallbackData {
+  type: 'distance_filter';
+  uf: 'SP' | 'PR';
+  distance: 'ALL' | '5K-9K' | '10K-21K' | '42K';
+}
+
 export type RaceCallbackData =
   | UfFilterCallbackData
   | RaceDetailCallbackData
-  | RaceLocationCallbackData;
+  | RaceLocationCallbackData
+  | DistanceFilterCallbackData;

@@ -61,9 +61,11 @@ export async function routeCommand(
       text: '❌ Erro interno. Tente novamente mais tarde.',
       format: 'HTML',
     };
-  } finally {
-    await messageInterceptor.interceptOutgoingMessage(input, output);
   }
+  // TODO - When we have AI implemented, we may want to re-enable this
+  // finally {
+  //   // await messageInterceptor.interceptOutgoingMessage(input, output);
+  // }
 
   return output;
 }

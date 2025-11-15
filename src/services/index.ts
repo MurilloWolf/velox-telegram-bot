@@ -3,6 +3,8 @@ export { raceApiService } from './RaceApiService.ts';
 export { favoriteApiService } from './FavoriteApiService.ts';
 export { healthApiService } from './Health/HealthApiService.ts';
 export { alertService } from './Alert/AlertService.ts';
+export { messageApiService } from './MessageApiService.ts';
 export type { CreateMessageRequest } from '../types/Service.ts';
 export type { Race, RaceStatus } from '../types/Service.ts';
 export type { FavoriteRace } from './FavoriteApiService.ts';
+export type { BotMessage } from '../types/Service.ts';

@@ -4,6 +4,7 @@ import {
   UfFilterCallbackData,
   RaceDetailCallbackData,
   RaceLocationCallbackData,
+  DistanceFilterCallbackData,
 } from '../../../types/callbacks/index.ts';
 
 export class CallbackDataSerializer {
@@ -16,6 +17,10 @@ export class CallbackDataSerializer {
       case 'uf_filter': {
         const filterData = data as UfFilterCallbackData;
         return `uf:${filterData.uf}`;
+      }
+      case 'distance_filter': {
+        const distanceData = data as DistanceFilterCallbackData;
+        return `dist:${distanceData.uf}:${distanceData.distance}`;
       }
       case 'race_detail': {
         const detailData = data as RaceDetailCallbackData;
@@ -49,6 +54,13 @@ export class CallbackDataSerializer {
           type: 'uf_filter',
           uf: parts[1] as 'SP' | 'PR',
         } as UfFilterCallbackData;
+      }
+      case 'dist': {
+        return {
+          type: 'distance_filter',
+          uf: parts[1] as 'SP' | 'PR',
+          distance: parts[2] as 'ALL' | '5K-9K' | '10K-21K' | '42K',
+        } as DistanceFilterCallbackData;
       }
       case 'race': {
         return {
@@ -96,5 +108,12 @@ export class CallbackDataSerializer {
 
   static raceLocation(raceId: string, uf?: string): RaceLocationCallbackData {
     return { type: 'race_location', raceId, uf };
+  }
+
+  static distanceFilter(
+    uf: 'SP' | 'PR',
+    distance: 'ALL' | '5K-9K' | '10K-21K' | '42K'
+  ): DistanceFilterCallbackData {
+    return { type: 'distance_filter', uf, distance };
   }
 }

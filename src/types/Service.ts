@@ -83,3 +83,31 @@ export enum RaceStatus {
   COMING_SOON = 'COMING_SOON',
   CANCELLED = 'CANCELLED',
 }
+
+export interface BotMessage {
+  externalId: string;
+  direction: 'INCOMING' | 'OUTGOING';
+  channel: 'TELEGRAM' | 'WHATSAPP';
+  text: string;
+  interactionType:
+    | 'TEXT'
+    | 'PHOTO'
+    | 'VIDEO'
+    | 'DOCUMENT'
+    | 'LOCATION'
+    | 'CONTACT'
+    | 'OTHER';
+  metadata: {
+    messageId: string;
+    timestamp: number;
+  };
+  contact: {
+    displayName: string;
+    metaData: {
+      phone?: string;
+      username?: string;
+      premium?: boolean;
+    };
+    lastSeen: string;
+  };
+}

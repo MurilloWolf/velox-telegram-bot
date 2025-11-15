@@ -11,34 +11,68 @@ import {
   ChatTypeValue,
   SupportedPlatform,
 } from '../../types/MessageInterceptor.ts';
+import { messageApiService } from '../../services/MessageApiService.ts';
 
 export class MessageInterceptor {
   async interceptIncomingMessage(input: CommandInput): Promise<void> {
     try {
-      // todo
+      const messageData = this.extractMessageData(input);
+
+      if (!messageData) {
+        logger.warn('No message data extracted, skipping interception', {
+          module: 'MessageInterceptor',
+          action: 'intercept_incoming',
+          platform: input.platform,
+          userId: input.user?.id?.toString(),
+        });
+        return;
+      }
+      await messageApiService.sendMessageFromCommandInput(
+        messageData,
+        'INCOMING'
+      );
+
+      logger.info('Successfully intercepted incoming message', {
+        module: 'MessageInterceptor',
+        action: 'intercept_incoming',
+        platform: input.platform,
+        userId: input.user?.id?.toString(),
+      });
     } catch (error) {
       logger.error(
         'Error intercepting incoming message',
         {
           module: 'MessageInterceptor',
           action: 'intercept_incoming',
+          platform: input.platform,
+          userId: input.user?.id?.toString(),
         },
         error as Error
       );
     }
   }
+
   async interceptOutgoingMessage(
     input: CommandInput,
     output: CommandOutput
   ): Promise<void> {
     try {
-      // todo
+      await messageApiService.sendMessageFromCommandInput(input, 'OUTGOING');
+
+      logger.info('Successfully intercepted outgoing message', {
+        module: 'MessageInterceptor',
+        action: 'intercept_outgoing',
+        platform: input.platform,
+        userId: input.user?.id?.toString(),
+      });
     } catch (error) {
       logger.error(
-        'Error intercepting incoming message',
+        'Error intercepting outgoing message',
         {
           module: 'MessageInterceptor',
-          action: 'intercept_incoming',
+          action: 'intercept_outgoing',
+          platform: input.platform,
+          userId: input.user?.id?.toString(),
         },
         error as Error
       );
