@@ -18,6 +18,7 @@ primary_region = 'gig'
 
 # Expor porta para health checks
 [[services]]
+  processes = ["app"]
   internal_port = 3001
   protocol = "tcp"
 
