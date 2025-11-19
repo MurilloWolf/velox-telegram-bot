@@ -25,6 +25,7 @@ export class CommandRegistry {
     });
 
     await this.registerCommandsFromModule('races');
+    await this.registerCommandsFromModule('basic');
 
     logger.moduleRegistration('CommandRegistry', 'command', this.commands.size);
   }
@@ -46,6 +47,14 @@ export class CommandRegistry {
             '../../commands/usecases/races/index.ts'
           );
           this.registerCommands(raceCommands, moduleName);
+          this.registeredModules.add(moduleName);
+          break;
+        }
+        case 'basic': {
+          const { basicCommands } = await import(
+            '../../commands/usecases/basic/index.ts'
+          );
+          this.registerCommands(basicCommands, moduleName);
           this.registeredModules.add(moduleName);
           break;
         }

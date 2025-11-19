@@ -1,6 +1,7 @@
 import { CommandRegistry } from '@bot/config/commands/CommandRegistry.ts';
 import { CommandInput, CommandOutput } from '@app-types/Command.ts';
 import { messageInterceptor } from '@bot/middleware/MessageInterceptor.ts';
+import { MediaRestrictionMiddleware } from '@bot/middleware/MediaRestrictionMiddleware.ts';
 import { logger } from '../../utils/Logger.ts';
 
 let commandRegistry: CommandRegistry | null = null;
@@ -34,6 +35,17 @@ export async function routeCommand(
   };
   try {
     await messageInterceptor.interceptIncomingMessage(input);
+
+    // Check for media restriction first
+    const mediaRestrictionOutput =
+      await MediaRestrictionMiddleware.checkMediaRestriction(input);
+    if (mediaRestrictionOutput) {
+      await messageInterceptor.interceptOutgoingMessage(
+        input,
+        mediaRestrictionOutput
+      );
+      return mediaRestrictionOutput;
+    }
 
     const registry = await getCommandRegistry();
     const handler = registry.getHandler(command);

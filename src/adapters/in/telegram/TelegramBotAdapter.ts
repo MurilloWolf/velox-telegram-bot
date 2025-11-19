@@ -14,6 +14,7 @@ import {
 import { PlatformAdapter } from '../../../types/PlatformAdapter.ts';
 import { CallbackDataSerializer } from '@bot/config/callback/CallbackDataSerializer.ts';
 import { callbackManager } from '@bot/config/callback/CallbackManager.ts';
+import { MediaRestrictionMiddleware } from '@bot/middleware/MediaRestrictionMiddleware.ts';
 import parseCommand from '../../../utils/parseCommand.ts';
 import { stripFormatting } from '../../../utils/markdownUtils.ts';
 import { logger } from '../../../utils/Logger.ts';
@@ -166,16 +167,31 @@ export class TelegramPlatformAdapter implements PlatformAdapter {
 }
 
 export async function handleTelegramMessage(bot: TelegramBot, msg: Message) {
-  if (!msg.text) {
-    return;
-  }
-
   logger.messageReceived(
     'telegram',
     msg.chat.id.toString(),
     msg.from?.id?.toString(),
-    'text'
+    'telegram_message'
   );
+
+  const input: CommandInput = {
+    user: { id: msg.from?.id, name: msg.from?.first_name },
+    args: [],
+    platform: 'telegram',
+    raw: msg,
+  };
+
+  const mediaRestrictionOutput =
+    await MediaRestrictionMiddleware.checkMediaRestriction(input);
+  if (mediaRestrictionOutput) {
+    const adapter = new TelegramPlatformAdapter(bot);
+    await adapter.sendMessage(msg.chat.id, mediaRestrictionOutput);
+    return;
+  }
+
+  if (!msg.text) {
+    return;
+  }
 
   const { command, args } = parseCommand(msg.text);
 
@@ -191,12 +207,8 @@ export async function handleTelegramMessage(bot: TelegramBot, msg: Message) {
     chatId: msg.chat.id.toString(),
   });
 
-  const input: CommandInput = {
-    user: { id: msg.from?.id, name: msg.from?.first_name },
-    args,
-    platform: 'telegram',
-    raw: msg,
-  };
+  // Update input with parsed command args
+  input.args = args;
 
   const output = await routeCommand(command, input);
 
