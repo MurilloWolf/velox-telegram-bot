@@ -31,7 +31,7 @@ describe('ContactCommand', () => {
       const result = await contactCommand(input);
 
       expect(result.text).toContain('Site Oficial');
-      expect(result.text).toContain('https://velox.run');
+      expect(result.text).toContain('https://www.veloxrunning.com');
     });
 
     it('should contain telegram support information', async () => {

@@ -44,7 +44,7 @@ describe('SponsorshipCommand', () => {
       const result = await sponsorshipCommand(input);
 
       expect(result.text).toContain('Links Importantes');
-      expect(result.text).toContain('https://velox.run');
+      expect(result.text).toContain('https://www.veloxrunning.com');
       expect(result.text).toContain('https://instagram.com/runningvelox');
       expect(result.text).toContain('https://twitter.com/RunningVelox');
     });

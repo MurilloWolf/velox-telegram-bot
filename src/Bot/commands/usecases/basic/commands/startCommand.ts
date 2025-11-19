@@ -22,14 +22,14 @@ export async function startCommand(
       userId: input.user?.id?.toString(),
     });
 
-    let userName = 'usuário';
+    let userName = 'Corredor';
 
     if (input.platform === 'telegram' && input.user) {
       const telegramUser = input.user as TelegramUser;
-      userName = telegramUser.first_name || telegramUser.username || 'usuário';
+      userName = telegramUser.first_name || telegramUser.username || 'Corredor';
     } else if (input.platform === 'whatsapp' && input.user) {
       const whatsappUser = input.user as WhatsAppUser;
-      userName = whatsappUser.name || 'usuário';
+      userName = whatsappUser.name || 'Corredor';
     }
 
     const message = basicMessages.start(userName);

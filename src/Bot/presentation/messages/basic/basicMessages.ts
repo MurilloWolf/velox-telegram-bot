@@ -9,14 +9,14 @@ export const basicMessages = {
     `• Receber alertas de novas provas\n` +
     `• Favoritar corridas de interesse\n` +
     `• Acompanhar calendário de eventos\n\n` +
-    `🌐 **Site oficial:** https://velox.run\n\n` +
+    `🌐 **Site oficial:** https://www.veloxrunning.com\n\n` +
     `❓ **Precisa de ajuda?** Use o comando /ajuda para ver todos os comandos disponíveis!`,
 
   help:
     `🆘 **Central de Ajuda VELOX Bot**\n\n` +
     `**Problemas com o bot?** 🔧\n` +
     `Se você está enfrentando dificuldades, visite nosso site para mais informações:\n` +
-    `🌐 https://velox.run\n\n` +
+    `🌐 https://www.veloxrunning.com\n\n` +
     `**📋 Comandos Disponíveis:**\n\n` +
     `**🔰 Comandos Básicos**\n` +
     `/start - Apresentação inicial do bot\n` +
@@ -27,7 +27,6 @@ export const basicMessages = {
     `**🏃‍♂️ Comandos de Corrida**\n` +
     `/corridas - Lista todas as corridas disponíveis\n` +
     `/buscar_corridas - Buscar corridas por filtros\n` +
-    `/proxima_corrida - Próxima corrida disponível\n` +
     `/favoritos - Suas corridas favoritas\n\n` +
     `💡 **Dica:** Clique em qualquer comando acima para executá-lo!`,
 
@@ -36,7 +35,7 @@ export const basicMessages = {
     `**📧 Email:**\n` +
     `velox.running.app@gmail.com\n\n` +
     `**🌐 Site Oficial:**\n` +
-    `https://velox.run\n\n` +
+    `https://www.veloxrunning.com\n\n` +
     `**💬 Suporte no Telegram:**\n` +
     `@veloxsupport\n\n` +
     `**📱 Redes Sociais:**\n` +
@@ -53,7 +52,7 @@ export const basicMessages = {
     `O VELOX Bot é seu companheiro inteligente para descobrir corridas, ` +
     `receber alertas personalizados e gerenciar seus eventos favoritos.\n\n` +
     `**🔗 Links Oficiais:**\n` +
-    `🌐 Site: https://velox.run\n` +
+    `🌐 Site: https://www.veloxrunning.com\n` +
     `📱 Instagram: https://instagram.com/runningvelox\n` +
     `🐦 Twitter: https://twitter.com/RunningVelox\n` +
     `💬 Suporte: @veloxsupport\n\n` +
@@ -76,7 +75,7 @@ export const basicMessages = {
     `• Crescimento orgânico constante\n` +
     `• Engajamento alto da comunidade\n\n` +
     `**🔗 Links Importantes:**\n` +
-    `🌐 Site: https://velox.run\n` +
+    `🌐 Site: https://www.veloxrunning.com\n` +
     `📱 Instagram: https://instagram.com/runningvelox\n` +
     `🐦 Twitter: https://twitter.com/RunningVelox\n\n` +
     `**📞 Entre em contato:**\n` +

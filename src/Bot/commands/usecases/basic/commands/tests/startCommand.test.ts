@@ -15,9 +15,9 @@ describe('StartCommand', () => {
       const input = createBasicInput('telegram');
       const result = await startCommand(input);
 
-      expect(result.text).toContain('🏃‍♂️ Olá, usuário!');
+      expect(result.text).toContain('🏃‍♂️ Olá, Corredor!');
       expect(result.text).toContain('Bem-vindo ao VELOX Bot!');
-      expect(result.text).toContain('https://velox.run');
+      expect(result.text).toContain('https://www.veloxrunning.com');
       expect(result.text).toContain('/ajuda');
       expect(result.format).toBe('markdown');
     });
@@ -64,7 +64,7 @@ describe('StartCommand', () => {
       expect(result.text).toContain('calendário de eventos');
 
       // Check for official website
-      expect(result.text).toContain('https://velox.run');
+      expect(result.text).toContain('https://www.veloxrunning.com');
 
       // Check for help command reference
       expect(result.text).toContain('/ajuda');
@@ -76,7 +76,7 @@ describe('StartCommand', () => {
       const input = createBasicInput('telegram');
       const result = await startCommand(input);
 
-      expect(result.text).toContain('usuário');
+      expect(result.text).toContain('Corredor');
       expect(result.format).toBe('markdown');
     });
 
@@ -84,7 +84,7 @@ describe('StartCommand', () => {
       const input = createBasicInput('telegram', {});
       const result = await startCommand(input);
 
-      expect(result.text).toContain('usuário');
+      expect(result.text).toContain('Corredor');
       expect(result.format).toBe('markdown');
     });
 
@@ -92,7 +92,7 @@ describe('StartCommand', () => {
       const input = createBasicInput('unknown', { name: 'Test' });
       const result = await startCommand(input);
 
-      expect(result.text).toContain('usuário');
+      expect(result.text).toContain('Corredor');
       expect(result.format).toBe('markdown');
     });
   });

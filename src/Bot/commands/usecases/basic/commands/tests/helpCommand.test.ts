@@ -14,9 +14,9 @@ describe('HelpCommand', () => {
       const input = createBasicInput('telegram');
       const result = await helpCommand(input);
 
-      expect(result.text).toContain('Central de Ajuda VELOX Bot');
-      expect(result.text).toContain('https://velox.run');
-      expect(result.format).toBe('markdown');
+        expect(result.text).toContain('Central de Ajuda VELOX Bot');
+        expect(result.text).toContain('https://www.veloxrunning.com');
+        expect(result.format).toBe('markdown');
     });
 
     it('should contain basic commands section', async () => {
@@ -38,7 +38,6 @@ describe('HelpCommand', () => {
       expect(result.text).toContain('Comandos de Corrida');
       expect(result.text).toContain('/corridas');
       expect(result.text).toContain('/buscar_corridas');
-      expect(result.text).toContain('/proxima_corrida');
       expect(result.text).toContain('/favoritos');
     });
 
@@ -47,7 +46,7 @@ describe('HelpCommand', () => {
       const result = await helpCommand(input);
 
       expect(result.text).toContain('Problemas com o bot');
-      expect(result.text).toContain('https://velox.run');
+      expect(result.text).toContain('https://www.veloxrunning.com');
     });
 
     it('should contain usage tips', async () => {

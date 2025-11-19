@@ -41,7 +41,7 @@ describe('AboutCommand', () => {
       const result = await aboutCommand(input);
 
       expect(result.text).toContain('Links Oficiais');
-      expect(result.text).toContain('https://velox.run');
+      expect(result.text).toContain('https://www.veloxrunning.com');
       expect(result.text).toContain('https://instagram.com/runningvelox');
       expect(result.text).toContain('https://twitter.com/RunningVelox');
       expect(result.text).toContain('@veloxsupport');
